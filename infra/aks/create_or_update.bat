@@ -86,7 +86,9 @@ set "temp_param_file=%TEMP%\aks_params_%RANDOM%.json"
 REM Read SSH key content using a temporary PowerShell script for security and proper error handling
 set "temp_ps_script=%TEMP%\read_ssh_key_%RANDOM%.ps1"
 (
-    echo param([string]$KeyPath^)
+    echo param(
+    echo     [Parameter(Mandatory=$true^)][ValidateNotNullOrEmpty(^)][string]$KeyPath
+    echo ^)
     echo try {
     echo     if (-not (Test-Path $KeyPath^)^) {
     echo         Write-Error "SSH key file not found: $KeyPath"
@@ -110,12 +112,16 @@ set "temp_ps_script=%TEMP%\read_ssh_key_%RANDOM%.ps1"
 ) > "%temp_ps_script%"
 
 REM Execute the PowerShell script and capture output
-for /f "usebackq delims=" %%i in (`powershell -ExecutionPolicy Bypass -File "%temp_ps_script%" -KeyPath "%SSH_KEY%" 2^>nul`) do set "ssh_key_content=%%i"
+REM Using RemoteSigned policy as the script is locally created
+for /f "usebackq delims=" %%i in (`powershell -ExecutionPolicy RemoteSigned -File "%temp_ps_script%" -KeyPath "%SSH_KEY%" 2^>^&1`) do (
+    set "ssh_key_content=%%i"
+)
 set "ps_exit_code=%errorlevel%"
 del "%temp_ps_script%" 2>nul
 
 if %ps_exit_code% neq 0 (
     echo Failed to read SSH key file: %SSH_KEY% 1>&2
+    echo %ssh_key_content% 1>&2
     exit /b 1
 )
 if "%ssh_key_content%"=="" (
