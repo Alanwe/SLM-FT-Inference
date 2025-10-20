@@ -14,12 +14,19 @@ This directory provides Bicep templates and scripts to deploy an Azure Kubernete
 ## Deployment Steps
 
 1. **Create/Update Cluster**
+   
+   On Linux/macOS:
    ```bash
    ./create_or_update.sh \
      --resource-group nc-h100-demo \
      --location eastus \
      --cluster-name nc-h100-aks \
      --ssh-public-key ~/.ssh/id_rsa.pub
+   ```
+   
+   On Windows:
+   ```cmd
+   create_or_update.bat --resource-group nc-h100-demo --location eastus --cluster-name nc-h100-aks --ssh-public-key %USERPROFILE%\.ssh\id_rsa.pub
    ```
 
    The script will:
@@ -28,8 +35,15 @@ This directory provides Bicep templates and scripts to deploy an Azure Kubernete
    - Configure namespaces (`nc40adis` and `nc80adis`) with scheduling labels.
 
 2. **Destroy Cluster**
+   
+   On Linux/macOS:
    ```bash
    ./destroy.sh --resource-group nc-h100-demo --cluster-name nc-h100-aks
+   ```
+   
+   On Windows:
+   ```cmd
+   destroy.bat --resource-group nc-h100-demo --cluster-name nc-h100-aks
    ```
 
 3. **Accessing the Cluster**
