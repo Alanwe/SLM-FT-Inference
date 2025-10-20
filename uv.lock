@@ -1,0 +1,6 @@
+# This lock file is a placeholder. Generate an updated lockfile with `uv lock`.
+[metadata]
+requires-python = ">=3.11"
+
+[packages]
+# The uv resolver will populate pinned versions here.
