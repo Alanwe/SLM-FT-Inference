@@ -83,9 +83,20 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 REM Create temporary parameter file
 set "temp_param_file=%TEMP%\aks_params_%RANDOM%.json"
 
-REM Read SSH key content
+REM Read SSH key content - properly handling multi-line keys and escaping
 set "ssh_key_content="
-for /f "usebackq delims=" %%i in ("%SSH_KEY%") do set "ssh_key_content=%%i"
+setlocal enabledelayedexpansion
+for /f "usebackq delims=" %%i in ("%SSH_KEY%") do (
+    if "!ssh_key_content!"=="" (
+        set "ssh_key_content=%%i"
+    ) else (
+        set "ssh_key_content=!ssh_key_content!\n%%i"
+    )
+)
+REM Escape backslashes and quotes for JSON
+set "ssh_key_content=!ssh_key_content:\=\\!"
+set "ssh_key_content=!ssh_key_content:"=\"!"
+endlocal & set "ssh_key_content=%ssh_key_content%"
 
 REM Create parameter file based on whether K8S version is provided
 if "%K8S_VERSION%"=="" (
