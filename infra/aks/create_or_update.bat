@@ -84,7 +84,16 @@ REM Create temporary parameter file
 set "temp_param_file=%TEMP%\aks_params_%RANDOM%.json"
 
 REM Read SSH key content using PowerShell for proper handling
-for /f "usebackq delims=" %%i in (`powershell -Command "& {(Get-Content '%SSH_KEY%' -Raw).Trim() -replace '\\', '\\\\' -replace '\"', '\\\"' -replace '\r?\n', '\\n'}"`) do set "ssh_key_content=%%i"
+REM This handles multi-line keys and escapes special characters for JSON
+for /f "usebackq delims=" %%i in (`powershell -Command "& {try { (Get-Content '%SSH_KEY%' -Raw -ErrorAction Stop).Trim() -replace '\\', '\\\\' -replace '\"', '\\\"' -replace '\r?\n', '\\n' } catch { Write-Error 'Failed to read SSH key'; exit 1 }}"`) do set "ssh_key_content=%%i"
+if %errorlevel% neq 0 (
+    echo Failed to read SSH key file: %SSH_KEY% 1>&2
+    exit /b 1
+)
+if "%ssh_key_content%"=="" (
+    echo SSH key file is empty: %SSH_KEY% 1>&2
+    exit /b 1
+)
 
 REM Create parameter file based on whether K8S version is provided
 if "%K8S_VERSION%"=="" (
