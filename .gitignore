@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.env
+.env.*
+.cache/
+outputs/
+checkpoints/
+logs/
+data/raw/
+data/processed/
+.mlflow/
+.DS_Store
+.idea/
+.vscode/
+uv.lock.backup

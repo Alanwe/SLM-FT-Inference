@@ -1,0 +1,12 @@
+base_model_name: meta-llama/Llama-3.1-8B-Instruct
+dataset_path: data/raw/wikitext_train.jsonl
+output_dir: outputs/accelerate
+num_epochs: 1
+batch_size: 2
+learning_rate: 2.0e-5
+gradient_accumulation_steps: 4
+max_seq_length: 1024
+lr_scheduler_type: cosine
+mixed_precision: bf16
+logging_steps: 10
+evaluation_steps: 100
