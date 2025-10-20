@@ -1,0 +1,15 @@
+model_name_or_path: mistralai/Mistral-7B-Instruct-v0.2
+output_dir: /mnt/output/mistral-deepspeed
+dataset_name: philschmid/guanaco-belle-7b
+dataset_split: train
+text_column: instruction
+response_column: response
+learning_rate: 1.5e-5
+num_epochs: 1
+batch_size: 1
+gradient_accumulation_steps: 32
+max_seq_length: 2048
+mixed_precision: bf16
+zero_stage: 3
+sampler_interval: 2.0
+metric_name: accuracy

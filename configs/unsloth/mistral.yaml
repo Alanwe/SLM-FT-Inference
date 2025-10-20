@@ -1,0 +1,21 @@
+model_name_or_path: mistralai/Mistral-7B-Instruct-v0.2
+output_dir: /mnt/output/mistral-unsloth
+dataset_name: philschmid/guanaco-belle-7b
+dataset_split: train
+text_column: instruction
+response_column: response
+learning_rate: 5.0e-5
+num_epochs: 1
+batch_size: 4
+gradient_accumulation_steps: 8
+max_seq_length: 2048
+lora_r: 64
+lora_alpha: 128
+lora_dropout: 0.05
+target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+  - o_proj
+sampler_interval: 1.5
+metric_name: accuracy

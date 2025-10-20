@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+.env
+.venv/
+.uv/
+uv.lock.bak
+.mlfow/
+outputs/
+*.ckpt
+*.pt
+*.bin
+**/metrics/system_metrics.json
+terraform.tfstate*
+.terraform/

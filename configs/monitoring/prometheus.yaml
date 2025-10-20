@@ -1,0 +1,3 @@
+pushgateway: ${PROMETHEUS_GATEWAY:-http://prometheus-pushgateway.monitoring.svc.cluster.local:9091}
+metrics_path: metrics/system_metrics.json
+job_name: llm-training
