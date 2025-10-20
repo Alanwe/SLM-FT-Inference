@@ -13,3 +13,7 @@ data/processed/
 .idea/
 .vscode/
 uv.lock.backup
+
+# VM infrastructure generated files
+infra/vm/hosts.txt
+infra/vm/logs/*.log

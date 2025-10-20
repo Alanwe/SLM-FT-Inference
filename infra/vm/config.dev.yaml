@@ -1,0 +1,44 @@
+# VM Infrastructure Configuration - Development Environment Example
+# This configuration creates low-cost Spot VMs for development and testing
+
+resourceGroup: "slm-vm-dev"
+location: "eastus"
+
+vm:
+  count: 1
+  vmSize: "Standard_NC6s_v3"
+  namePrefix: "slm-dev"
+  priority: "Spot"
+  evictionPolicy: "Deallocate"
+  maxPrice: -1
+  
+  image:
+    publisher: "Canonical"
+    offer: "0001-com-ubuntu-server-jammy"
+    sku: "22_04-lts-gen2"
+    version: "latest"
+  
+  osDisk:
+    sizeGB: 128
+    storageType: "Standard_LRS"
+  
+  adminUsername: "azureuser"
+  sshPublicKeyPath: "~/.ssh/id_rsa.pub"
+
+network:
+  vnetName: "slm-dev-vnet"
+  vnetAddressPrefix: "10.1.0.0/16"
+  subnetName: "slm-dev-subnet"
+  subnetAddressPrefix: "10.1.1.0/24"
+  nsgName: "slm-dev-nsg"
+  allowedSshSources:
+    - "0.0.0.0/0"
+
+postDeploy:
+  githubRepo: "https://github.com/Alanwe/SLM-FT-Inference.git"
+  repoTargetDir: "/home/azureuser/SLM-FT-Inference"
+  pythonVersion: "3.11"
+  dockerImages:
+    - "nvidia/cuda:12.2.0-runtime-ubuntu22.04"
+  customCommands:
+    - "echo 'Development environment setup complete'"

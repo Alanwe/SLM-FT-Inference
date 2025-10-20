@@ -1,0 +1,48 @@
+# VM Infrastructure Configuration - Production Environment Example
+# This configuration creates Standard (non-Spot) VMs with H100 GPUs for production workloads
+
+resourceGroup: "slm-vm-prod"
+location: "eastus"
+
+vm:
+  count: 4
+  vmSize: "Standard_NC40adis_H100_v5"
+  namePrefix: "slm-prod"
+  priority: "Standard"
+  evictionPolicy: "Deallocate"
+  maxPrice: -1
+  
+  image:
+    publisher: "Canonical"
+    offer: "0001-com-ubuntu-server-jammy"
+    sku: "22_04-lts-gen2"
+    version: "latest"
+  
+  osDisk:
+    sizeGB: 512
+    storageType: "Premium_LRS"
+  
+  adminUsername: "azureuser"
+  sshPublicKeyPath: "~/.ssh/id_rsa.pub"
+
+network:
+  vnetName: "slm-prod-vnet"
+  vnetAddressPrefix: "10.0.0.0/16"
+  subnetName: "slm-prod-subnet"
+  subnetAddressPrefix: "10.0.1.0/24"
+  nsgName: "slm-prod-nsg"
+  allowedSshSources:
+    - "YOUR_IP_ADDRESS/32"  # Replace with your actual IP for security
+
+postDeploy:
+  githubRepo: "https://github.com/Alanwe/SLM-FT-Inference.git"
+  repoTargetDir: "/home/azureuser/SLM-FT-Inference"
+  pythonVersion: "3.11"
+  dockerImages:
+    - "nvidia/cuda:12.2.0-runtime-ubuntu22.04"
+    - "huggingface/transformers-pytorch-gpu:latest"
+    - "nvcr.io/nvidia/pytorch:23.10-py3"
+  customCommands:
+    - "cd /home/azureuser/SLM-FT-Inference && python3 -m venv venv"
+    - "cd /home/azureuser/SLM-FT-Inference && source venv/bin/activate && pip install --upgrade pip"
+    - "echo 'Production environment setup complete'"

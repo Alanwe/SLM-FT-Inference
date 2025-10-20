@@ -2,7 +2,9 @@
 
 This repository provides a complete demonstration environment for fine-tuning and serving large language models (LLMs) on Azure NC-series H100/H200 GPU infrastructure. It includes:
 
-- Infrastructure-as-code (IaC) definitions to provision AKS GPU clusters with Standard_NC40adis_H100_v5 and Standard_NC80adis_H100_v5 node pools using Azure Bicep.
+- Infrastructure-as-code (IaC) definitions to provision:
+  - AKS GPU clusters with Standard_NC40adis_H100_v5 and Standard_NC80adis_H100_v5 node pools using Azure Bicep
+  - Azure VMs with configurable GPU SKUs, automated setup scripts, and post-deployment configuration
 - UV-managed Python environments targeting CUDA-enabled containers for reproducible local and remote execution.
 - Fine-tuning pipelines implemented with Hugging Face Accelerate, DeepSpeed, and Unsloth, including sample datasets, metrics capture, and multi-node readiness.
 - Inference benchmarking harnesses for vLLM, SGLang, LMDeploy, and TensorRT-LLM with unified configuration-driven experiment execution and metrics logging.
@@ -16,11 +18,18 @@ This repository provides a complete demonstration environment for fine-tuning an
 ├── Dockerfile.uv
 ├── .gitignore
 ├── infra/
-│   └── aks/
-│       ├── main.bicep
+│   ├── aks/
+│   │   ├── main.bicep
+│   │   ├── README.md
+│   │   ├── create_or_update.sh
+│   │   └── destroy.sh
+│   └── vm/
 │       ├── README.md
-│       ├── create_or_update.sh
-│       └── destroy.sh
+│       ├── config.yaml
+│       ├── create_vms.sh
+│       ├── post_deploy.sh
+│       ├── check_status.sh
+│       └── destroy_vms.sh
 ├── scripts/
 │   ├── bootstrap_env.sh
 │   └── monitor_system.py
