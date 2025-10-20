@@ -1,0 +1,29 @@
+benchmarks:
+  - runner: vllm
+    prompts:
+      - "Explain the advantages of Azure NC H100v5 instances for large language model fine-tuning."
+      - "Summarize the latest changes in this demo repository."
+    repetitions: 2
+    params:
+      model: meta-llama/Llama-3.1-8B-Instruct
+      max_new_tokens: 128
+      tensor_parallel_size: 2
+      temperature: 0.1
+  - runner: sglang
+    prompts:
+      - "Draft a release announcement for an Azure AI reference architecture."
+    params:
+      model: meta-llama/Llama-3.1-8B-Instruct
+      max_new_tokens: 128
+      tensor_parallel_size: 1
+  - runner: lmdeploy
+    params:
+      model: meta-llama/Llama-3.1-8B-Instruct
+      backend: turbomind
+      max_new_tokens: 64
+  - runner: tensorrt-llm
+    params:
+      engine_dir: /models/trt_engine
+      model: llama3_trt
+      max_new_tokens: 64
+      temperature: 0.01
