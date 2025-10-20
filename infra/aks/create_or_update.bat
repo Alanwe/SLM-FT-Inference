@@ -83,15 +83,43 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 REM Create temporary parameter file
 set "temp_param_file=%TEMP%\aks_params_%RANDOM%.json"
 
-REM Read SSH key content using PowerShell for proper handling
-REM This handles multi-line keys and escapes special characters for JSON
-for /f "usebackq delims=" %%i in (`powershell -Command "& {try { (Get-Content '%SSH_KEY%' -Raw -ErrorAction Stop).Trim() -replace '\\', '\\\\' -replace '\"', '\\\"' -replace '\r?\n', '\\n' } catch { Write-Error 'Failed to read SSH key'; exit 1 }}"`) do set "ssh_key_content=%%i"
-if %errorlevel% neq 0 (
+REM Read SSH key content using a temporary PowerShell script for security and proper error handling
+set "temp_ps_script=%TEMP%\read_ssh_key_%RANDOM%.ps1"
+(
+    echo param([string]$KeyPath^)
+    echo try {
+    echo     if (-not (Test-Path $KeyPath^)^) {
+    echo         Write-Error "SSH key file not found: $KeyPath"
+    echo         exit 1
+    echo     }
+    echo     $content = (Get-Content $KeyPath -Raw -ErrorAction Stop^).Trim(^)
+    echo     if ([string]::IsNullOrEmpty($content^)^) {
+    echo         Write-Error "SSH key file is empty"
+    echo         exit 1
+    echo     }
+    echo     # Escape for JSON: backslashes, quotes, and normalize newlines
+    echo     $content = $content -replace '\\', '\\\\'
+    echo     $content = $content -replace '"', '\\"'
+    echo     $content = $content -replace '\r?\n', '\\n'
+    echo     Write-Output $content
+    echo     exit 0
+    echo } catch {
+    echo     Write-Error "Failed to read SSH key: $_"
+    echo     exit 1
+    echo }
+) > "%temp_ps_script%"
+
+REM Execute the PowerShell script and capture output
+for /f "usebackq delims=" %%i in (`powershell -ExecutionPolicy Bypass -File "%temp_ps_script%" -KeyPath "%SSH_KEY%" 2^>nul`) do set "ssh_key_content=%%i"
+set "ps_exit_code=%errorlevel%"
+del "%temp_ps_script%" 2>nul
+
+if %ps_exit_code% neq 0 (
     echo Failed to read SSH key file: %SSH_KEY% 1>&2
     exit /b 1
 )
 if "%ssh_key_content%"=="" (
-    echo SSH key file is empty: %SSH_KEY% 1>&2
+    echo SSH key file is empty or could not be read: %SSH_KEY% 1>&2
     exit /b 1
 )
 
