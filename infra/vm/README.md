@@ -65,7 +65,20 @@ The VM infrastructure automation includes:
    - Generate `hosts.txt` with VM IP addresses
    - Run post-deployment configuration
 
-3. **Access your VMs**
+3. **Check VM status**
+   
+   ```bash
+   ./check_status.sh
+   ```
+   
+   This will show:
+   - VM power states and sizes
+   - SSH connectivity status
+   - Docker installation status
+   - GPU availability (nvidia-smi output)
+   - Cost estimates
+
+4. **Access your VMs**
    
    ```bash
    # View created VMs and their IPs
@@ -75,7 +88,7 @@ The VM infrastructure automation includes:
    ssh azureuser@<public-ip>
    ```
 
-4. **Destroy infrastructure**
+5. **Destroy infrastructure**
    
    ```bash
    chmod +x destroy_vms.sh
@@ -221,6 +234,26 @@ Post-deployment configuration script (automatically called by create_vms.sh).
 ```bash
 ./post_deploy.sh <config-file> <hosts-file>
 ```
+
+### check_status.sh
+
+Check the status of created VMs, test connectivity, and view GPU/Docker status.
+
+**Usage:**
+```bash
+./check_status.sh [--config <config-file>]
+```
+
+**Options:**
+- `--config <file>` - Use custom configuration file (default: config.yaml)
+- `--help, -h` - Show help message
+
+**Features:**
+- Lists all VMs and their power states
+- Tests SSH connectivity to each VM
+- Checks Docker installation status
+- Reports GPU status via nvidia-smi
+- Provides cost estimates
 
 ### destroy_vms.sh
 
