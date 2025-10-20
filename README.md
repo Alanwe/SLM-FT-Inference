@@ -58,9 +58,21 @@ This repository provides a complete demonstration environment for fine-tuning an
 ## Getting Started
 
 1. **Install UV**
+   
+   On Linux/macOS:
    ```bash
    curl -LsSf https://astral.sh/uv/install.sh | sh
    uv sync
+   ```
+   
+   Or use the bootstrap script:
+   ```bash
+   ./scripts/bootstrap_env.sh
+   ```
+   
+   On Windows:
+   ```cmd
+   scripts\bootstrap_env.bat
    ```
 
 2. **Set up environment variables**
